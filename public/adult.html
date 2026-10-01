@@ -54,29 +54,38 @@
             </label>
             <label>
               <span class="label-heading">Primary food</span>
-              <input list="food-options" type="text" id="foodTypePrimary" name="foodTypePrimary" placeholder="Choose or type a food..." required />
+              <select id="foodTypePrimary" name="foodTypePrimary" required>
+                <option value="">Select primary food...</option>
+                <option value="Commercial prawn pellets">Commercial prawn pellets</option>
+                <option value="Fish meal">Fish meal</option>
+                <option value="Mollusc meal">Mollusc meal</option>
+                <option value="Fresh fish / seafood">Fresh fish / seafood</option>
+                <option value="Artemia">Artemia</option>
+                <option value="Formulated grow-out feed">Formulated grow-out feed</option>
+                <option value="Other">Other - see notes</option>
+              </select>
             </label>
           </div>
 
           <div class="row two-up">
             <label>
               <span class="label-heading">Second food <span class="optional-label">Optional</span></span>
-              <input list="food-options" type="text" id="foodTypeSecondary" name="foodTypeSecondary" placeholder="Choose or type another food..." />
+              <select id="foodTypeSecondary" name="foodTypeSecondary">
+                <option value="">No second food</option>
+                <option value="Commercial prawn pellets">Commercial prawn pellets</option>
+                <option value="Fish meal">Fish meal</option>
+                <option value="Mollusc meal">Mollusc meal</option>
+                <option value="Fresh fish / seafood">Fresh fish / seafood</option>
+                <option value="Artemia">Artemia</option>
+                <option value="Formulated grow-out feed">Formulated grow-out feed</option>
+                <option value="Other">Other - see notes</option>
+              </select>
             </label>
             <label>
               Next feed due
               <input type="datetime-local" id="nextFeedDue" name="nextFeedDue" />
             </label>
           </div>
-
-          <datalist id="food-options">
-            <option value="Commercial prawn pellets"></option>
-            <option value="Fish meal"></option>
-            <option value="Mollusc meal"></option>
-            <option value="Fresh fish / seafood"></option>
-            <option value="Artemia"></option>
-            <option value="Formulated grow-out feed"></option>
-          </datalist>
 
           <div class="row two-up">
             <label>

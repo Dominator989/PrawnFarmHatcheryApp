@@ -17,7 +17,7 @@ This project is a small hatchery tracking app for keeping notes on when each tan
 
 The stage dropdown uses common hatchery terms: nauplii, zoea, mysis, then PL bands such as PL1-PL5 and PL6-PL10. PL means post-larvae; exact size and timing vary with species, temperature, nutrition, and hatchery practice, so the app records the operational band used by your farm.
 
-The adult tank page is available at `/adult.html`. Its food fields provide common suggestions while allowing staff to type a custom food name when the farm uses something different.
+The adult tank page is available at `/adult.html`. Its food fields use clear dropdowns with an `Other - see notes` option for anything outside the standard list.
 
 ## Quick start
 
