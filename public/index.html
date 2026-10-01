@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Prawn Farm Hatchery Tank Tracker</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="container">
+      <header class="page-header">
+        <div>
+          <p class="eyebrow">Hatchery tracking</p>
+          <h1>Prawn tank maintenance log</h1>
+        </div>
+      </header>
+
+      <section class="panel form-panel">
+        <h2>Log a tank update</h2>
+        <form id="tank-form">
+          <div class="row two-up">
+            <label>
+              Tank name
+              <input type="text" id="tankName" name="tankName" placeholder="Example: Tank 01" required />
+            </label>
+            <label>
+              Feed type / next feed
+              <input type="text" id="feedType" name="feedType" placeholder="Example: Shrimp pellets" required />
+            </label>
+          </div>
+
+          <div class="row two-up">
+            <label>
+              Water changed
+              <input type="datetime-local" id="waterChangedAt" name="waterChangedAt" required />
+            </label>
+            <label>
+              Last fed
+              <input type="datetime-local" id="lastFedAt" name="lastFedAt" required />
+            </label>
+          </div>
+
+          <div class="row">
+            <label>
+              Next feed due
+              <input type="datetime-local" id="nextFeedDue" name="nextFeedDue" />
+            </label>
+          </div>
+
+          <div class="row">
+            <label>
+              Extra notes
+              <textarea id="notes" name="notes" rows="4" placeholder="Add anything else worth remembering for this tank..."></textarea>
+            </label>
+          </div>
+
+          <div class="actions">
+            <button type="submit">Save tank update</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="panel">
+        <div class="section-heading">
+          <h2>Recent tank activity</h2>
+        </div>
+        <div id="records" class="records" aria-live="polite"></div>
+      </section>
+    </main>
+
+    <script src="/app.js"></script>
+  </body>
+</html>
