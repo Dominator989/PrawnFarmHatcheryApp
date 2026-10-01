@@ -10,8 +10,30 @@ function toLocalDateTimeString(date = new Date()) {
 
 function setDefaultDates() {
   const now = toLocalDateTimeString();
-  document.getElementById('waterChangedAt').value = now;
-  document.getElementById('lastFedAt').value = now;
+  const waterChangedInput = document.getElementById('waterChangedAt');
+  const lastFedInput = document.getElementById('lastFedAt');
+
+  if (waterChangedInput && !waterChangedInput.value) {
+    waterChangedInput.value = now;
+  }
+
+  if (lastFedInput && !lastFedInput.value) {
+    lastFedInput.value = now;
+  }
+}
+
+function refreshCurrentTimes() {
+  const now = toLocalDateTimeString();
+  const waterChangedInput = document.getElementById('waterChangedAt');
+  const lastFedInput = document.getElementById('lastFedAt');
+
+  if (waterChangedInput) {
+    waterChangedInput.value = now;
+  }
+
+  if (lastFedInput) {
+    lastFedInput.value = now;
+  }
 }
 
 function formatDate(value) {
@@ -101,7 +123,7 @@ form.addEventListener('submit', async (event) => {
     }
 
     form.reset();
-    setDefaultDates();
+    refreshCurrentTimes();
     await loadTankRecords();
     alert(result.message);
   } catch (error) {
@@ -109,5 +131,6 @@ form.addEventListener('submit', async (event) => {
   }
 });
 
+refreshCurrentTimes();
 setDefaultDates();
 loadTankRecords();
