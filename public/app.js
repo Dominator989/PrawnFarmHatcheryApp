@@ -80,7 +80,7 @@ function escapeHtml(value) {
 function renderTankRecords() {
   const searchTerm = searchInput.value.trim().toLowerCase();
   const filteredRecords = tankRecords.filter((record) =>
-    [record.tank_name, record.prawn_stage, record.feed_type, record.notes]
+    [record.tank_name, record.prawn_stage, record.food_type_primary, record.food_type_secondary, record.feed_type, record.notes]
       .some((value) => String(value || '').toLowerCase().includes(searchTerm))
   );
 
@@ -121,8 +121,8 @@ function renderTankRecords() {
               <span>${formatDate(record.next_feed_due)}</span>
             </div>
             <div class="meta-box">
-              <strong>Feed type</strong>
-              <span>${escapeHtml(record.feed_type)}</span>
+              <strong>Food plan</strong>
+              <span>${escapeHtml(record.food_type_primary || record.feed_type) || 'Not set'}${record.food_type_secondary ? ` + ${escapeHtml(record.food_type_secondary)}` : ''}</span>
             </div>
           </div>
           <p class="record-notes"><strong>Notes:</strong> ${escapeHtml(record.notes) || 'No additional notes.'}</p>
@@ -149,10 +149,11 @@ form.addEventListener('submit', async (event) => {
   const payload = {
     tankName: document.getElementById('tankName').value,
     prawnStage: document.getElementById('prawnStage').value,
+    foodTypePrimary: document.getElementById('foodTypePrimary').value,
+    foodTypeSecondary: document.getElementById('foodTypeSecondary').value,
     waterChangedAt: document.getElementById('waterChangedAt').value,
     lastFedAt: document.getElementById('lastFedAt').value,
     nextFeedDue: document.getElementById('nextFeedDue').value,
-    feedType: document.getElementById('feedType').value,
     notes: document.getElementById('notes').value,
   };
 
@@ -186,14 +187,15 @@ function exportCsv() {
     return;
   }
 
-  const headers = ['Tank', 'Prawn stage / size', 'Water changed', 'Last fed', 'Next feed due', 'Feed type', 'Notes'];
+  const headers = ['Tank', 'Prawn stage / size', 'Primary food', 'Second food', 'Water changed', 'Last fed', 'Next feed due', 'Notes'];
   const rows = tankRecords.map((record) => [
     record.tank_name,
     record.prawn_stage || '',
+    record.food_type_primary || record.feed_type || '',
+    record.food_type_secondary || '',
     record.water_changed_at,
     record.last_fed_at,
     record.next_feed_due || '',
-    record.feed_type,
     record.notes || '',
   ]);
   const csv = [headers, ...rows]

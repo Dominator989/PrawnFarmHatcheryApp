@@ -6,6 +6,7 @@ This project is a small hatchery tracking app for keeping notes on when each tan
 
 - Track each tank by name
 - Record the hatchery stage or PL size band, from nauplii through juvenile
+- Record a primary food and an optional second food for each tank
 - Record when the water was last changed
 - Record when a tank was fed last
 - Log the next feed due date

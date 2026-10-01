@@ -251,6 +251,12 @@ button:hover {
   margin: 0;
 }
 
+.optional-label {
+  color: var(--muted);
+  font-size: 0.75rem;
+  font-weight: 400;
+}
+
 .activity-tools input {
   max-width: 420px;
 }

@@ -62,8 +62,30 @@
 
           <div class="row two-up">
             <label>
-              Feed type / next feed
-              <input type="text" id="feedType" name="feedType" placeholder="Example: Shrimp pellets" required />
+              Primary food
+              <select id="foodTypePrimary" name="foodTypePrimary" required>
+                <option value="">Select primary food...</option>
+                <option value="Microalgae - Nannochloropsis">Microalgae - Nannochloropsis</option>
+                <option value="Microalgae - Chaetoceros">Microalgae - Chaetoceros</option>
+                <option value="Rotifers">Rotifers</option>
+                <option value="Artemia nauplii">Artemia nauplii</option>
+                <option value="Formulated hatchery microdiet">Formulated hatchery microdiet</option>
+                <option value="Crumble / pellets">Crumble / pellets</option>
+                <option value="Other">Other - see notes</option>
+              </select>
+            </label>
+            <label>
+              Second food <span class="optional-label">Optional</span>
+              <select id="foodTypeSecondary" name="foodTypeSecondary">
+                <option value="">No second food</option>
+                <option value="Microalgae - Nannochloropsis">Microalgae - Nannochloropsis</option>
+                <option value="Microalgae - Chaetoceros">Microalgae - Chaetoceros</option>
+                <option value="Rotifers">Rotifers</option>
+                <option value="Artemia nauplii">Artemia nauplii</option>
+                <option value="Formulated hatchery microdiet">Formulated hatchery microdiet</option>
+                <option value="Crumble / pellets">Crumble / pellets</option>
+                <option value="Other">Other - see notes</option>
+              </select>
             </label>
           </div>
 

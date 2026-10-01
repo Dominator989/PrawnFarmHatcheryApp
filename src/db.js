@@ -101,21 +101,14 @@ async function run(sql, params = []) {
   });
 }
 
-async function ensurePrawnStageColumn() {
-  if (dbClient === 'mysql') {
-    await pool.query(`
-      ALTER TABLE tank_records
-      ADD COLUMN IF NOT EXISTS prawn_stage VARCHAR(50) NOT NULL DEFAULT 'Unknown'
-    `);
-    return;
-  }
-
+async function addSqliteColumnIfMissing(columnDefinition) {
   const columns = await query('PRAGMA table_info(tank_records)');
-  if (columns.some((column) => column.name === 'prawn_stage')) {
+  const columnName = columnDefinition.split(' ')[0];
+  if (columns.some((column) => column.name === columnName)) {
     return;
   }
 
-  await run(`ALTER TABLE tank_records ADD COLUMN prawn_stage TEXT NOT NULL DEFAULT 'Unknown'`);
+  await run(`ALTER TABLE tank_records ADD COLUMN ${columnDefinition}`);
 }
 
 async function initDatabase() {
@@ -126,6 +119,8 @@ async function initDatabase() {
         id INT AUTO_INCREMENT PRIMARY KEY,
         tank_name VARCHAR(100) NOT NULL,
         prawn_stage VARCHAR(50) NOT NULL DEFAULT 'Unknown',
+        food_type_primary VARCHAR(100) NOT NULL DEFAULT 'Unknown',
+        food_type_secondary VARCHAR(100),
         water_changed_at DATETIME NOT NULL,
         last_fed_at DATETIME NOT NULL,
         next_feed_due DATETIME,
@@ -136,7 +131,14 @@ async function initDatabase() {
       )
     `);
 
-    await ensurePrawnStageColumn();
+    await pool.query(`
+      ALTER TABLE tank_records
+      ADD COLUMN IF NOT EXISTS food_type_primary VARCHAR(100) NOT NULL DEFAULT 'Unknown'
+    `);
+    await pool.query(`
+      ALTER TABLE tank_records
+      ADD COLUMN IF NOT EXISTS food_type_secondary VARCHAR(100)
+    `);
 
     await pool.query(`
       CREATE INDEX IF NOT EXISTS idx_tank_records_tank_name ON tank_records (tank_name)
@@ -149,62 +151,28 @@ async function initDatabase() {
     return;
   }
 
-  return new Promise((resolve, reject) => {
-    sqliteDb.run(
-      `
-        CREATE TABLE IF NOT EXISTS tank_records (
-          id INTEGER PRIMARY KEY AUTOINCREMENT,
-          tank_name TEXT NOT NULL,
-          prawn_stage TEXT NOT NULL DEFAULT 'Unknown',
-          water_changed_at TEXT NOT NULL,
-          last_fed_at TEXT NOT NULL,
-          next_feed_due TEXT,
-          feed_type TEXT NOT NULL,
-          notes TEXT,
-          created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-          updated_at TEXT DEFAULT CURRENT_TIMESTAMP
-        )
-      `,
-      (error) => {
-        if (error) {
-          reject(error);
-          return;
-        }
+  await run(`
+    CREATE TABLE IF NOT EXISTS tank_records (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      tank_name TEXT NOT NULL,
+      prawn_stage TEXT NOT NULL DEFAULT 'Unknown',
+      food_type_primary TEXT NOT NULL DEFAULT 'Unknown',
+      food_type_secondary TEXT,
+      water_changed_at TEXT NOT NULL,
+      last_fed_at TEXT NOT NULL,
+      next_feed_due TEXT,
+      feed_type TEXT NOT NULL,
+      notes TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
 
-        sqliteDb.run(
-          `ALTER TABLE tank_records ADD COLUMN prawn_stage TEXT NOT NULL DEFAULT 'Unknown'`,
-          (migrationError) => {
-            if (migrationError && !migrationError.message.includes('duplicate column name')) {
-              reject(migrationError);
-              return;
-            }
-
-            sqliteDb.run(
-              `CREATE INDEX IF NOT EXISTS idx_tank_records_tank_name ON tank_records (tank_name)`,
-              (indexError) => {
-                if (indexError) {
-                  reject(indexError);
-                  return;
-                }
-
-                sqliteDb.run(
-                  `CREATE INDEX IF NOT EXISTS idx_tank_records_next_feed_due ON tank_records (next_feed_due)`,
-                  (nextFeedError) => {
-                    if (nextFeedError) {
-                      reject(nextFeedError);
-                      return;
-                    }
-
-                    resolve();
-                  }
-                );
-              }
-            );
-          }
-        );
-      }
-    );
-  });
+  await addSqliteColumnIfMissing('prawn_stage TEXT NOT NULL DEFAULT \'Unknown\'');
+  await addSqliteColumnIfMissing('food_type_primary TEXT NOT NULL DEFAULT \'Unknown\'');
+  await addSqliteColumnIfMissing('food_type_secondary TEXT');
+  await run(`CREATE INDEX IF NOT EXISTS idx_tank_records_tank_name ON tank_records (tank_name)`);
+  await run(`CREATE INDEX IF NOT EXISTS idx_tank_records_next_feed_due ON tank_records (next_feed_due)`);
 }
 
 module.exports = {

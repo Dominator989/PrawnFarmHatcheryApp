@@ -6,6 +6,8 @@ CREATE TABLE IF NOT EXISTS tank_records (
     id INT AUTO_INCREMENT PRIMARY KEY,
     tank_name VARCHAR(100) NOT NULL,
     prawn_stage VARCHAR(50) NOT NULL DEFAULT 'Unknown',
+    food_type_primary VARCHAR(100) NOT NULL DEFAULT 'Unknown',
+    food_type_secondary VARCHAR(100),
     water_changed_at DATETIME NOT NULL,
     last_fed_at DATETIME NOT NULL,
     next_feed_due DATETIME,
