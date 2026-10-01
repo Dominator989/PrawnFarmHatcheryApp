@@ -2,3 +2,7 @@ node_modules/
 .env
 npm-debug.log*
 .DS_Store
+*.sqlite
+*.sqlite3
+data/*.sqlite
+data/*.sqlite3

@@ -14,48 +14,61 @@ This project is a small hatchery tracking app for keeping notes on when each tan
 
 ## Quick start
 
-1. Create a MySQL database and update the connection settings in the `.env` file.
-2. Install dependencies:
+### Option 1: One-click launch on Windows
+
+Double-click `start-app.bat` in the project folder, or run this in PowerShell:
+
+```powershell
+./start-app.ps1
+```
+
+This script will check whether dependencies are installed, install them if needed, and then start the app.
+
+### Option 2: Manual launch
+
+1. Install dependencies:
 
    ```bash
    npm install
    ```
 
-3. Start the app:
+2. Start the app:
 
    ```bash
    npm start
    ```
 
-4. Open the app in your browser:
+3. Open the app in your browser:
 
    ```text
    http://localhost:3000
    ```
 
-## MySQL setup
+## Database mode
 
-Copy `.env.example` to `.env` and change the database values to match your MySQL server.
+This project is now SQLite-first so it works immediately without a MySQL server.
 
-Example:
+The app stores data in a local SQLite database at:
 
-```env
-PORT=3000
-DB_HOST=localhost
-DB_PORT=3306
-DB_USER=root
-DB_PASSWORD=your_password_here
-DB_NAME=prawn_farm_hatchery
+```text
+./data/prawn_farm_hatchery.sqlite
 ```
 
-The app will automatically create the database and table if the connection works.
+The default config is already set in `.env` to use SQLite. If you later want to switch to MySQL for production, set:
+
+```env
+DB_CLIENT=mysql
+```
+
+and fill in the MySQL connection values.
 
 ## App flow
 
 - The main form lets you add a tank event.
-- The app saves records to MySQL.
+- The app saves records to SQLite by default.
 - The recent activity list shows the latest tank updates.
+- The records can be exported later to CSV or migrated to MySQL when your farm scales up.
 
 ## Project status
 
-This is the initial working version of the app and is intended to be developed in a separate feature branch before merging later.
+This branch is the local, easy-to-run starter version of the app and keeps the project in a clean feature branch so it can be merged later.

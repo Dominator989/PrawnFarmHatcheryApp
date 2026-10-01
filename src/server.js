@@ -1,6 +1,6 @@
 const express = require('express');
 const path = require('path');
-const { pool, initDatabase } = require('./db');
+const { initDatabase, query, run, get, dbClient } = require('./db');
 
 const app = express();
 const PORT = Number(process.env.PORT || 3000);
@@ -11,10 +11,7 @@ app.use(express.static(path.join(__dirname, '../public')));
 
 app.get('/api/tanks', async (req, res) => {
   try {
-    const [rows] = await pool.query(
-      'SELECT * FROM tank_records ORDER BY created_at DESC'
-    );
-
+    const rows = await query('SELECT * FROM tank_records ORDER BY created_at DESC');
     res.json(rows);
   } catch (error) {
     console.error('Unable to fetch tank records:', error);
@@ -42,7 +39,7 @@ app.post('/api/tanks', async (req, res) => {
   }
 
   try {
-    const [result] = await pool.query(
+    const result = await run(
       `
         INSERT INTO tank_records (
           tank_name,
@@ -56,29 +53,26 @@ app.post('/api/tanks', async (req, res) => {
       [cleanTankName, waterChangedAt, lastFedAt, nextFeedDue || null, cleanFeedType, notes || null]
     );
 
-    const [rows] = await pool.query(
-      'SELECT * FROM tank_records WHERE id = ? LIMIT 1',
-      [result.insertId]
-    );
+    const record = await get('SELECT * FROM tank_records WHERE id = ? LIMIT 1', [result.insertId || result.lastID]);
 
     res.status(201).json({
       message: 'Tank log saved successfully.',
-      record: rows[0],
+      record,
     });
   } catch (error) {
     console.error('Unable to save tank record:', error);
-    res.status(500).json({ message: 'Could not save the tank log to MySQL.' });
+    res.status(500).json({ message: `Could not save the tank log to ${dbClient === 'mysql' ? 'MySQL' : 'SQLite'}.` });
   }
 });
 
 app.get('/health', async (req, res) => {
   try {
-    await pool.query('SELECT 1');
-    res.json({ ok: true, message: 'Database connected successfully.' });
+    await query('SELECT 1');
+    res.json({ ok: true, message: `Database connected successfully using ${dbClient}.` });
   } catch (error) {
     res.status(500).json({
       ok: false,
-      message: 'Database is not available yet. Check your MySQL connection settings.',
+      message: `Database is not available yet. Check your ${dbClient} configuration settings.`,
     });
   }
 });
@@ -96,10 +90,10 @@ async function startServer() {
   try {
     await initDatabase();
     app.listen(PORT, () => {
-      console.log(`Prawn tank tracker running at http://localhost:${PORT}`);
+      console.log(`Prawn tank tracker running at http://localhost:${PORT} using ${dbClient.toUpperCase()}`);
     });
   } catch (error) {
-    console.error('Unable to start the app because MySQL is not configured:', error.message);
+    console.error('Unable to start the app because the database is not configured:', error.message);
     process.exit(1);
   }
 }
