@@ -1,5 +1,7 @@
 const form = document.getElementById('tank-form');
 const recordsContainer = document.getElementById('records');
+const searchInput = document.getElementById('searchInput');
+let tankRecords = [];
 
 function toLocalDateTimeString(date = new Date()) {
   const localDate = new Date(date);
@@ -48,47 +50,89 @@ function formatDate(value) {
   }).format(date);
 }
 
+function getFeedState(value) {
+  if (!value) return { label: 'No time set', className: 'status-neutral' };
+
+  const difference = new Date(value).getTime() - Date.now();
+  if (difference < 0) return { label: 'Feed overdue', className: 'status-overdue' };
+  if (difference <= 24 * 60 * 60 * 1000) return { label: 'Feed due soon', className: 'status-soon' };
+  return { label: 'On schedule', className: 'status-ok' };
+}
+
+function updateMetrics(records) {
+  const dueSoon = records.filter((record) => getFeedState(record.next_feed_due).className === 'status-soon').length;
+  const overdue = records.filter((record) => getFeedState(record.next_feed_due).className === 'status-overdue').length;
+
+  document.getElementById('metricTotal').textContent = records.length;
+  document.getElementById('metricDue').textContent = dueSoon;
+  document.getElementById('metricOverdue').textContent = overdue;
+}
+
+function escapeHtml(value) {
+  return String(value || '')
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#039;');
+}
+
+function renderTankRecords() {
+  const searchTerm = searchInput.value.trim().toLowerCase();
+  const filteredRecords = tankRecords.filter((record) =>
+    [record.tank_name, record.feed_type, record.notes]
+      .some((value) => String(value || '').toLowerCase().includes(searchTerm))
+  );
+
+  updateMetrics(tankRecords);
+
+  if (filteredRecords.length === 0) {
+    recordsContainer.innerHTML = `<div class="empty-state">${searchTerm ? 'No tanks match that search.' : 'No tank maintenance has been logged yet.'}</div>`;
+    return;
+  }
+
+  recordsContainer.innerHTML = filteredRecords
+    .map((record) => {
+      const feedState = getFeedState(record.next_feed_due);
+      return `
+        <article class="record-card">
+          <div class="record-header">
+            <div>
+              <span class="record-kicker">Tank record</span>
+              <h3>${escapeHtml(record.tank_name)}</h3>
+            </div>
+            <span class="record-status ${feedState.className}">${feedState.label}</span>
+          </div>
+          <div class="record-meta">
+            <div class="meta-box">
+              <strong>Water changed</strong>
+              <span>${formatDate(record.water_changed_at)}</span>
+            </div>
+            <div class="meta-box">
+              <strong>Last fed</strong>
+              <span>${formatDate(record.last_fed_at)}</span>
+            </div>
+            <div class="meta-box">
+              <strong>Next feed</strong>
+              <span>${formatDate(record.next_feed_due)}</span>
+            </div>
+            <div class="meta-box">
+              <strong>Feed type</strong>
+              <span>${escapeHtml(record.feed_type)}</span>
+            </div>
+          </div>
+          <p class="record-notes"><strong>Notes:</strong> ${escapeHtml(record.notes) || 'No additional notes.'}</p>
+        </article>
+      `;
+    })
+    .join('');
+}
+
 async function loadTankRecords() {
   try {
     const response = await fetch('/api/tanks');
-    const records = await response.json();
-
-    if (!Array.isArray(records) || records.length === 0) {
-      recordsContainer.innerHTML = '<div class="empty-state">No tank maintenance has been logged yet.</div>';
-      return;
-    }
-
-    recordsContainer.innerHTML = records
-      .map(
-        (record) => `
-          <article class="record-card">
-            <div class="record-header">
-              <h3>${record.tank_name}</h3>
-              <span>${formatDate(record.created_at)}</span>
-            </div>
-            <div class="record-meta">
-              <div class="meta-box">
-                <strong>Water changed</strong>
-                <span>${formatDate(record.water_changed_at)}</span>
-              </div>
-              <div class="meta-box">
-                <strong>Last fed</strong>
-                <span>${formatDate(record.last_fed_at)}</span>
-              </div>
-              <div class="meta-box">
-                <strong>Next feed</strong>
-                <span>${formatDate(record.next_feed_due)}</span>
-              </div>
-              <div class="meta-box">
-                <strong>Feed type</strong>
-                <span>${record.feed_type}</span>
-              </div>
-            </div>
-            <p><strong>Notes:</strong> ${record.notes ? record.notes : 'No additional notes.'}</p>
-          </article>
-        `
-      )
-      .join('');
+    tankRecords = await response.json();
+    renderTankRecords();
   } catch (error) {
     recordsContainer.innerHTML = '<div class="empty-state">Unable to load the recent tank activity.</div>';
     console.error(error);
@@ -130,6 +174,34 @@ form.addEventListener('submit', async (event) => {
     alert(error.message);
   }
 });
+
+function exportCsv() {
+  if (tankRecords.length === 0) {
+    alert('There are no tank records to export yet.');
+    return;
+  }
+
+  const headers = ['Tank', 'Water changed', 'Last fed', 'Next feed due', 'Feed type', 'Notes'];
+  const rows = tankRecords.map((record) => [
+    record.tank_name,
+    record.water_changed_at,
+    record.last_fed_at,
+    record.next_feed_due || '',
+    record.feed_type,
+    record.notes || '',
+  ]);
+  const csv = [headers, ...rows]
+    .map((row) => row.map((value) => `"${String(value).replaceAll('"', '""')}"`).join(','))
+    .join('\n');
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' }));
+  link.download = `prawn-tank-log-${new Date().toISOString().slice(0, 10)}.csv`;
+  link.click();
+  URL.revokeObjectURL(link.href);
+}
+
+searchInput.addEventListener('input', renderTankRecords);
+document.getElementById('exportButton').addEventListener('click', exportCsv);
 
 refreshCurrentTimes();
 setDefaultDates();

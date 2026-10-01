@@ -10,10 +10,30 @@
     <main class="container">
       <header class="page-header">
         <div>
-          <p class="eyebrow">Hatchery tracking</p>
-          <h1>Prawn tank maintenance log</h1>
+          <p class="eyebrow">Hatchery operations</p>
+          <h1>Tank care, at a glance.</h1>
+          <p class="header-copy">Keep feeding and water-change decisions visible for every tank in the room.</p>
         </div>
+        <div class="live-status"><span class="status-dot"></span>Live local log</div>
       </header>
+
+      <section class="metric-grid" aria-label="Tank activity summary">
+        <article class="metric-card metric-card-accent">
+          <span class="metric-label">Tank updates</span>
+          <strong id="metricTotal">0</strong>
+          <span class="metric-caption">records this season</span>
+        </article>
+        <article class="metric-card">
+          <span class="metric-label">Feed due soon</span>
+          <strong id="metricDue">0</strong>
+          <span class="metric-caption">within the next 24 hours</span>
+        </article>
+        <article class="metric-card metric-card-warm">
+          <span class="metric-label">Needs attention</span>
+          <strong id="metricOverdue">0</strong>
+          <span class="metric-caption">feeding windows passed</span>
+        </article>
+      </section>
 
       <section class="panel form-panel">
         <h2>Log a tank update</h2>
@@ -60,9 +80,17 @@
         </form>
       </section>
 
-      <section class="panel">
+      <section class="panel activity-panel">
         <div class="section-heading">
-          <h2>Recent tank activity</h2>
+          <div>
+            <p class="eyebrow">The latest log</p>
+            <h2>Recent tank activity</h2>
+          </div>
+          <button type="button" id="exportButton" class="button-secondary">Export CSV</button>
+        </div>
+        <div class="activity-tools">
+          <label class="search-label" for="searchInput">Find a tank</label>
+          <input type="search" id="searchInput" placeholder="Search by tank or feed type..." />
         </div>
         <div id="records" class="records" aria-live="polite"></div>
       </section>
