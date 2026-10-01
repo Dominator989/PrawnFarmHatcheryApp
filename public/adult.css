@@ -5,16 +5,6 @@
   gap: 14px;
 }
 
-.page-links a {
-  color: var(--primary-dark);
-  font: 700 0.85rem Arial, Helvetica, sans-serif;
-  text-decoration: none;
-}
-
-.page-links a:hover {
-  text-decoration: underline;
-}
-
 .form-heading {
   align-items: flex-start;
 }

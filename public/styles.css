@@ -37,6 +37,39 @@ body {
   margin-bottom: 24px;
 }
 
+.nav-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0 18px;
+  border: 1px solid #9fcfc0;
+  border-radius: 12px;
+  background: #e7f2ed;
+  color: var(--primary-dark);
+  font: 700 0.88rem Arial, Helvetica, sans-serif;
+  text-decoration: none;
+  box-shadow: 0 7px 16px rgba(15, 118, 110, 0.1);
+  transition: transform 160ms ease, background 160ms ease, box-shadow 160ms ease;
+}
+
+.nav-button::after {
+  content: '\2192';
+  margin-left: 10px;
+  font-size: 1.1rem;
+}
+
+.nav-button:hover {
+  background: #d5ebe1;
+  box-shadow: 0 10px 20px rgba(15, 118, 110, 0.16);
+  transform: translateY(-1px);
+}
+
+.nav-button:focus-visible {
+  outline: 3px solid rgba(15, 118, 110, 0.25);
+  outline-offset: 3px;
+}
+
 .eyebrow {
   margin: 0 0 8px;
   font-size: 0.8rem;
