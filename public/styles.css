@@ -170,6 +170,12 @@ label {
   font-size: 0.9rem;
 }
 
+.label-heading {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
 input,
 textarea,
 select,
