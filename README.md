@@ -5,12 +5,15 @@ This project is a small hatchery tracking app for keeping notes on when each tan
 ## Features
 
 - Track each tank by name
+- Record the hatchery stage or PL size band, from nauplii through juvenile
 - Record when the water was last changed
 - Record when a tank was fed last
 - Log the next feed due date
 - Add notes for special observations
 - Store records in a MySQL database
 - Use the current local date and time automatically
+
+The stage dropdown uses common hatchery terms: nauplii, zoea, mysis, then PL bands such as PL1-PL5 and PL6-PL10. PL means post-larvae; exact size and timing vary with species, temperature, nutrition, and hatchery practice, so the app records the operational band used by your farm.
 
 ## Quick start
 

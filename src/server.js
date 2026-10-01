@@ -22,6 +22,7 @@ app.get('/api/tanks', async (req, res) => {
 app.post('/api/tanks', async (req, res) => {
   const {
     tankName,
+    prawnStage,
     waterChangedAt,
     lastFedAt,
     nextFeedDue,
@@ -30,11 +31,12 @@ app.post('/api/tanks', async (req, res) => {
   } = req.body;
 
   const cleanTankName = String(tankName || '').trim();
+  const cleanPrawnStage = String(prawnStage || '').trim();
   const cleanFeedType = String(feedType || '').trim();
 
-  if (!cleanTankName || !waterChangedAt || !lastFedAt || !cleanFeedType) {
+  if (!cleanTankName || !cleanPrawnStage || !waterChangedAt || !lastFedAt || !cleanFeedType) {
     return res.status(400).json({
-      message: 'Tank name, water change time, last fed time, and feed type are required.',
+      message: 'Tank name, prawn stage, water change time, last fed time, and feed type are required.',
     });
   }
 
@@ -43,14 +45,15 @@ app.post('/api/tanks', async (req, res) => {
       `
         INSERT INTO tank_records (
           tank_name,
+          prawn_stage,
           water_changed_at,
           last_fed_at,
           next_feed_due,
           feed_type,
           notes
-        ) VALUES (?, ?, ?, ?, ?, ?)
+        ) VALUES (?, ?, ?, ?, ?, ?, ?)
       `,
-      [cleanTankName, waterChangedAt, lastFedAt, nextFeedDue || null, cleanFeedType, notes || null]
+      [cleanTankName, cleanPrawnStage, waterChangedAt, lastFedAt, nextFeedDue || null, cleanFeedType, notes || null]
     );
 
     const record = await get('SELECT * FROM tank_records WHERE id = ? LIMIT 1', [result.insertId || result.lastID]);

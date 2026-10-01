@@ -101,6 +101,23 @@ async function run(sql, params = []) {
   });
 }
 
+async function ensurePrawnStageColumn() {
+  if (dbClient === 'mysql') {
+    await pool.query(`
+      ALTER TABLE tank_records
+      ADD COLUMN IF NOT EXISTS prawn_stage VARCHAR(50) NOT NULL DEFAULT 'Unknown'
+    `);
+    return;
+  }
+
+  const columns = await query('PRAGMA table_info(tank_records)');
+  if (columns.some((column) => column.name === 'prawn_stage')) {
+    return;
+  }
+
+  await run(`ALTER TABLE tank_records ADD COLUMN prawn_stage TEXT NOT NULL DEFAULT 'Unknown'`);
+}
+
 async function initDatabase() {
   if (dbClient === 'mysql') {
     await ensureMysqlDatabaseExists();
@@ -108,6 +125,7 @@ async function initDatabase() {
       CREATE TABLE IF NOT EXISTS tank_records (
         id INT AUTO_INCREMENT PRIMARY KEY,
         tank_name VARCHAR(100) NOT NULL,
+        prawn_stage VARCHAR(50) NOT NULL DEFAULT 'Unknown',
         water_changed_at DATETIME NOT NULL,
         last_fed_at DATETIME NOT NULL,
         next_feed_due DATETIME,
@@ -117,6 +135,8 @@ async function initDatabase() {
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
       )
     `);
+
+    await ensurePrawnStageColumn();
 
     await pool.query(`
       CREATE INDEX IF NOT EXISTS idx_tank_records_tank_name ON tank_records (tank_name)
@@ -135,6 +155,7 @@ async function initDatabase() {
         CREATE TABLE IF NOT EXISTS tank_records (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           tank_name TEXT NOT NULL,
+          prawn_stage TEXT NOT NULL DEFAULT 'Unknown',
           water_changed_at TEXT NOT NULL,
           last_fed_at TEXT NOT NULL,
           next_feed_due TEXT,
@@ -151,22 +172,32 @@ async function initDatabase() {
         }
 
         sqliteDb.run(
-          `CREATE INDEX IF NOT EXISTS idx_tank_records_tank_name ON tank_records (tank_name)`,
-          (indexError) => {
-            if (indexError) {
-              reject(indexError);
+          `ALTER TABLE tank_records ADD COLUMN prawn_stage TEXT NOT NULL DEFAULT 'Unknown'`,
+          (migrationError) => {
+            if (migrationError && !migrationError.message.includes('duplicate column name')) {
+              reject(migrationError);
               return;
             }
 
             sqliteDb.run(
-              `CREATE INDEX IF NOT EXISTS idx_tank_records_next_feed_due ON tank_records (next_feed_due)`,
-              (nextFeedError) => {
-                if (nextFeedError) {
-                  reject(nextFeedError);
+              `CREATE INDEX IF NOT EXISTS idx_tank_records_tank_name ON tank_records (tank_name)`,
+              (indexError) => {
+                if (indexError) {
+                  reject(indexError);
                   return;
                 }
 
-                resolve();
+                sqliteDb.run(
+                  `CREATE INDEX IF NOT EXISTS idx_tank_records_next_feed_due ON tank_records (next_feed_due)`,
+                  (nextFeedError) => {
+                    if (nextFeedError) {
+                      reject(nextFeedError);
+                      return;
+                    }
+
+                    resolve();
+                  }
+                );
               }
             );
           }

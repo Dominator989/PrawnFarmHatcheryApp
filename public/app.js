@@ -80,7 +80,7 @@ function escapeHtml(value) {
 function renderTankRecords() {
   const searchTerm = searchInput.value.trim().toLowerCase();
   const filteredRecords = tankRecords.filter((record) =>
-    [record.tank_name, record.feed_type, record.notes]
+    [record.tank_name, record.prawn_stage, record.feed_type, record.notes]
       .some((value) => String(value || '').toLowerCase().includes(searchTerm))
   );
 
@@ -104,6 +104,10 @@ function renderTankRecords() {
             <span class="record-status ${feedState.className}">${feedState.label}</span>
           </div>
           <div class="record-meta">
+            <div class="meta-box">
+              <strong>Stage / size</strong>
+              <span>${escapeHtml(record.prawn_stage) || 'Not set'}</span>
+            </div>
             <div class="meta-box">
               <strong>Water changed</strong>
               <span>${formatDate(record.water_changed_at)}</span>
@@ -144,6 +148,7 @@ form.addEventListener('submit', async (event) => {
 
   const payload = {
     tankName: document.getElementById('tankName').value,
+    prawnStage: document.getElementById('prawnStage').value,
     waterChangedAt: document.getElementById('waterChangedAt').value,
     lastFedAt: document.getElementById('lastFedAt').value,
     nextFeedDue: document.getElementById('nextFeedDue').value,
@@ -181,9 +186,10 @@ function exportCsv() {
     return;
   }
 
-  const headers = ['Tank', 'Water changed', 'Last fed', 'Next feed due', 'Feed type', 'Notes'];
+  const headers = ['Tank', 'Prawn stage / size', 'Water changed', 'Last fed', 'Next feed due', 'Feed type', 'Notes'];
   const rows = tankRecords.map((record) => [
     record.tank_name,
+    record.prawn_stage || '',
     record.water_changed_at,
     record.last_fed_at,
     record.next_feed_due || '',
