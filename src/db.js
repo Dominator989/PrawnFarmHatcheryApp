@@ -132,6 +132,21 @@ async function initDatabase() {
     `);
 
     await pool.query(`
+      CREATE TABLE IF NOT EXISTS adult_prawn_records (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        tank_name VARCHAR(100) NOT NULL,
+        food_type_primary VARCHAR(100) NOT NULL,
+        food_type_secondary VARCHAR(100),
+        water_changed_at DATETIME NOT NULL,
+        last_fed_at DATETIME NOT NULL,
+        next_feed_due DATETIME,
+        notes TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+      )
+    `);
+
+    await pool.query(`
       ALTER TABLE tank_records
       ADD COLUMN IF NOT EXISTS food_type_primary VARCHAR(100) NOT NULL DEFAULT 'Unknown'
     `);
@@ -162,6 +177,21 @@ async function initDatabase() {
       last_fed_at TEXT NOT NULL,
       next_feed_due TEXT,
       feed_type TEXT NOT NULL,
+      notes TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+
+  await run(`
+    CREATE TABLE IF NOT EXISTS adult_prawn_records (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      tank_name TEXT NOT NULL,
+      food_type_primary TEXT NOT NULL,
+      food_type_secondary TEXT,
+      water_changed_at TEXT NOT NULL,
+      last_fed_at TEXT NOT NULL,
+      next_feed_due TEXT,
       notes TEXT,
       created_at TEXT DEFAULT CURRENT_TIMESTAMP,
       updated_at TEXT DEFAULT CURRENT_TIMESTAMP

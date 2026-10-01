@@ -7,6 +7,7 @@ This project is a small hatchery tracking app for keeping notes on when each tan
 - Track each tank by name
 - Record the hatchery stage or PL size band, from nauplii through juvenile
 - Record a primary food and an optional second food for each tank
+- Track adult prawn tanks on a separate page without a PL stage field
 - Record when the water was last changed
 - Record when a tank was fed last
 - Log the next feed due date
@@ -15,6 +16,8 @@ This project is a small hatchery tracking app for keeping notes on when each tan
 - Use the current local date and time automatically
 
 The stage dropdown uses common hatchery terms: nauplii, zoea, mysis, then PL bands such as PL1-PL5 and PL6-PL10. PL means post-larvae; exact size and timing vary with species, temperature, nutrition, and hatchery practice, so the app records the operational band used by your farm.
+
+The adult tank page is available at `/adult.html`. Its food fields provide common suggestions while allowing staff to type a custom food name when the farm uses something different.
 
 ## Quick start
 

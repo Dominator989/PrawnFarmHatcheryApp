@@ -73,6 +73,61 @@ app.post('/api/tanks', async (req, res) => {
   }
 });
 
+app.get('/api/adult-prawns', async (req, res) => {
+  try {
+    const rows = await query('SELECT * FROM adult_prawn_records ORDER BY created_at DESC');
+    res.json(rows);
+  } catch (error) {
+    console.error('Unable to fetch adult prawn records:', error);
+    res.status(500).json({ message: 'Unable to load adult prawn records.' });
+  }
+});
+
+app.post('/api/adult-prawns', async (req, res) => {
+  const {
+    tankName,
+    foodTypePrimary,
+    foodTypeSecondary,
+    waterChangedAt,
+    lastFedAt,
+    nextFeedDue,
+    notes,
+  } = req.body;
+
+  const cleanTankName = String(tankName || '').trim();
+  const cleanFoodTypePrimary = String(foodTypePrimary || '').trim();
+  const cleanFoodTypeSecondary = String(foodTypeSecondary || '').trim();
+
+  if (!cleanTankName || !cleanFoodTypePrimary || !waterChangedAt || !lastFedAt) {
+    return res.status(400).json({
+      message: 'Tank name, primary food, water change time, and last fed time are required.',
+    });
+  }
+
+  try {
+    const result = await run(
+      `
+        INSERT INTO adult_prawn_records (
+          tank_name,
+          food_type_primary,
+          food_type_secondary,
+          water_changed_at,
+          last_fed_at,
+          next_feed_due,
+          notes
+        ) VALUES (?, ?, ?, ?, ?, ?, ?)
+      `,
+      [cleanTankName, cleanFoodTypePrimary, cleanFoodTypeSecondary || null, waterChangedAt, lastFedAt, nextFeedDue || null, notes || null]
+    );
+
+    const record = await get('SELECT * FROM adult_prawn_records WHERE id = ? LIMIT 1', [result.insertId || result.lastID]);
+    res.status(201).json({ message: 'Adult prawn log saved successfully.', record });
+  } catch (error) {
+    console.error('Unable to save adult prawn record:', error);
+    res.status(500).json({ message: `Could not save the adult prawn log to ${dbClient === 'mysql' ? 'MySQL' : 'SQLite'}.` });
+  }
+});
+
 app.get('/health', async (req, res) => {
   try {
     await query('SELECT 1');
