@@ -186,6 +186,22 @@ h1 {
   margin-bottom: 24px;
 }
 
+.status-message {
+  margin: 0 0 18px;
+  border: 1px solid #b8dccc;
+  border-radius: 10px;
+  padding: 12px 14px;
+  background: #edf9f2;
+  color: var(--success);
+  font: 700 0.88rem Arial, Helvetica, sans-serif;
+}
+
+.status-message.error {
+  border-color: #f1b8b8;
+  background: #fff1f1;
+  color: var(--danger);
+}
+
 .activity-panel {
   padding-bottom: 28px;
 }
@@ -214,6 +230,12 @@ label {
   display: inline-flex;
   align-items: baseline;
   gap: 6px;
+}
+
+.field-help {
+  color: var(--muted);
+  font: 400 0.78rem Arial, Helvetica, sans-serif;
+  line-height: 1.4;
 }
 
 input,
@@ -310,6 +332,64 @@ button:hover {
 .records {
   display: grid;
   gap: 16px;
+}
+
+.table-wrap {
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.activity-table {
+  width: 100%;
+  min-width: 0;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 0.84rem;
+  text-align: left;
+}
+
+.activity-table th,
+.activity-table td {
+  padding: 14px 13px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+  overflow-wrap: anywhere;
+}
+
+.activity-table thead th {
+  background: #f1f7f4;
+  color: var(--muted);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+.activity-table tbody tr:last-child th,
+.activity-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.activity-table tbody tr:hover {
+  background: #f8fbf9;
+}
+
+.activity-table tbody th {
+  max-width: 125px;
+  color: var(--text);
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 0.98rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.activity-table td:nth-child(2),
+.activity-table td:nth-child(3),
+.activity-table td:last-child {
+  color: var(--muted);
 }
 
 .record-card {
@@ -423,6 +503,23 @@ button:hover {
 
   .activity-tools input {
     max-width: none;
+  }
+
+  .activity-table {
+    font-size: 0.72rem;
+  }
+
+  .activity-table th,
+  .activity-table td {
+    padding: 10px 6px;
+  }
+
+  .activity-table thead th {
+    white-space: normal;
+  }
+
+  .activity-table tbody th {
+    font-size: 0.82rem;
   }
 
   .two-up {

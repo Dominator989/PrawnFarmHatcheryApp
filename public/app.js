@@ -1,13 +1,39 @@
 const form = document.getElementById('tank-form');
 const recordsContainer = document.getElementById('records');
 const searchInput = document.getElementById('searchInput');
+const statusMessage = document.getElementById('statusMessage');
 let tankRecords = [];
+
+function showMessage(message, type = 'success') {
+  statusMessage.textContent = message;
+  statusMessage.className = `status-message ${type === 'error' ? 'error' : ''}`;
+  statusMessage.hidden = false;
+}
 
 function toLocalDateTimeString(date = new Date()) {
   const localDate = new Date(date);
   const offset = localDate.getTimezoneOffset();
   const corrected = new Date(localDate.getTime() - offset * 60 * 1000);
   return corrected.toISOString().slice(0, 16);
+}
+
+function toLocalDateString(date = new Date()) {
+  return toLocalDateTimeString(date).slice(0, 10);
+}
+
+function getLifecycle(record) {
+  const stockedAt = new Date(`${record.stocked_at || toLocalDateString()}T00:00:00`);
+  const today = new Date(`${toLocalDateString()}T00:00:00`);
+  const daysInTank = Math.max(0, Math.floor((today - stockedAt) / (24 * 60 * 60 * 1000)));
+
+  if (daysInTank <= 1) return { daysInTank, stage: 'Nauplii (approx.)' };
+  if (daysInTank <= 4) return { daysInTank, stage: 'Zoea (approx.)' };
+  if (daysInTank <= 7) return { daysInTank, stage: 'Mysis (approx.)' };
+  if (daysInTank <= 14) return { daysInTank, stage: 'PL1-PL7 (approx.)' };
+  if (daysInTank <= 21) return { daysInTank, stage: 'PL8-PL14 (approx.)' };
+  if (daysInTank <= 30) return { daysInTank, stage: 'PL15-PL23 (approx.)' };
+  if (daysInTank <= 45) return { daysInTank, stage: 'PL24-PL38 (approx.)' };
+  return { daysInTank, stage: 'Juvenile / grow-out (approx.)' };
 }
 
 function setDefaultDates() {
@@ -35,6 +61,11 @@ function refreshCurrentTimes() {
 
   if (lastFedInput) {
     lastFedInput.value = now;
+  }
+
+  const stockedAtInput = document.getElementById('stockedAt');
+  if (stockedAtInput && !stockedAtInput.value) {
+    stockedAtInput.value = toLocalDateString();
   }
 }
 
@@ -80,7 +111,7 @@ function escapeHtml(value) {
 function renderTankRecords() {
   const searchTerm = searchInput.value.trim().toLowerCase();
   const filteredRecords = tankRecords.filter((record) =>
-    [record.tank_name, record.prawn_stage, record.food_type_primary, record.food_type_secondary, record.feed_type, record.notes]
+    [record.tank_name, record.stocked_at, record.food_type_primary, record.food_type_secondary, record.feed_type, record.notes]
       .some((value) => String(value || '').toLowerCase().includes(searchTerm))
   );
 
@@ -91,45 +122,32 @@ function renderTankRecords() {
     return;
   }
 
-  recordsContainer.innerHTML = filteredRecords
-    .map((record) => {
-      const feedState = getFeedState(record.next_feed_due);
-      return `
-        <article class="record-card">
-          <div class="record-header">
-            <div>
-              <span class="record-kicker">Tank record</span>
-              <h3>${escapeHtml(record.tank_name)}</h3>
-            </div>
-            <span class="record-status ${feedState.className}">${feedState.label}</span>
-          </div>
-          <div class="record-meta">
-            <div class="meta-box">
-              <strong>Stage / size</strong>
-              <span>${escapeHtml(record.prawn_stage) || 'Not set'}</span>
-            </div>
-            <div class="meta-box">
-              <strong>Water changed</strong>
-              <span>${formatDate(record.water_changed_at)}</span>
-            </div>
-            <div class="meta-box">
-              <strong>Last fed</strong>
-              <span>${formatDate(record.last_fed_at)}</span>
-            </div>
-            <div class="meta-box">
-              <strong>Next feed</strong>
-              <span>${formatDate(record.next_feed_due)}</span>
-            </div>
-            <div class="meta-box">
-              <strong>Food plan</strong>
-              <span>${escapeHtml(record.food_type_primary || record.feed_type) || 'Not set'}${record.food_type_secondary ? ` + ${escapeHtml(record.food_type_secondary)}` : ''}</span>
-            </div>
-          </div>
-          <p class="record-notes"><strong>Notes:</strong> ${escapeHtml(record.notes) || 'No additional notes.'}</p>
-        </article>
-      `;
-    })
-    .join('');
+  recordsContainer.innerHTML = `
+    <div class="table-wrap">
+      <table class="activity-table">
+        <thead>
+          <tr><th>Tank</th><th>Days in tank</th><th>Auto stage / size</th><th>Food plan</th><th>Water changed</th><th>Last fed</th><th>Next feed</th><th>Status</th><th>Notes</th></tr>
+        </thead>
+        <tbody>
+          ${filteredRecords.map((record) => {
+            const feedState = getFeedState(record.next_feed_due);
+            const lifecycle = getLifecycle(record);
+            return `<tr>
+              <th scope="row" title="${escapeHtml(record.tank_name)}">${escapeHtml(record.tank_name)}</th>
+              <td>${lifecycle.daysInTank}</td>
+              <td>${lifecycle.stage}</td>
+              <td>${escapeHtml(record.food_type_primary || record.feed_type) || 'Not set'}${record.food_type_secondary ? ` + ${escapeHtml(record.food_type_secondary)}` : ''}</td>
+              <td>${formatDate(record.water_changed_at)}</td>
+              <td>${formatDate(record.last_fed_at)}</td>
+              <td>${formatDate(record.next_feed_due)}</td>
+              <td><span class="record-status ${feedState.className}">${feedState.label}</span></td>
+              <td>${escapeHtml(record.notes) || 'No notes'}</td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>
+  `;
 }
 
 async function loadTankRecords() {
@@ -148,7 +166,7 @@ form.addEventListener('submit', async (event) => {
 
   const payload = {
     tankName: document.getElementById('tankName').value,
-    prawnStage: document.getElementById('prawnStage').value,
+    stockedAt: document.getElementById('stockedAt').value,
     foodTypePrimary: document.getElementById('foodTypePrimary').value,
     foodTypeSecondary: document.getElementById('foodTypeSecondary').value,
     waterChangedAt: document.getElementById('waterChangedAt').value,
@@ -175,22 +193,24 @@ form.addEventListener('submit', async (event) => {
     form.reset();
     refreshCurrentTimes();
     await loadTankRecords();
-    alert(result.message);
+    showMessage(result.message);
   } catch (error) {
-    alert(error.message);
+    showMessage(error.message, 'error');
   }
 });
 
 function exportCsv() {
   if (tankRecords.length === 0) {
-    alert('There are no tank records to export yet.');
+    showMessage('There are no tank records to export yet.', 'error');
     return;
   }
 
-  const headers = ['Tank', 'Prawn stage / size', 'Primary food', 'Second food', 'Water changed', 'Last fed', 'Next feed due', 'Notes'];
+  const headers = ['Tank', 'Stocked at', 'Days in tank', 'Auto stage / size', 'Primary food', 'Second food', 'Water changed', 'Last fed', 'Next feed due', 'Notes'];
   const rows = tankRecords.map((record) => [
     record.tank_name,
-    record.prawn_stage || '',
+    record.stocked_at || '',
+    getLifecycle(record).daysInTank,
+    getLifecycle(record).stage,
     record.food_type_primary || record.feed_type || '',
     record.food_type_secondary || '',
     record.water_changed_at,
