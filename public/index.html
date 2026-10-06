@@ -12,7 +12,7 @@
         <div>
           <p class="eyebrow">Hatchery operations</p>
           <h1>Tank care, at a glance.</h1>
-          <p class="header-copy">Keep feeding and water-change decisions visible for every tank in the room.</p>
+          <p class="header-copy">Keep feeding, water changes, and black tiger prawn growth visible for every tank in the room.</p>
         </div>
         <div class="page-links">
           <a class="nav-button" href="/adult.html">Open adult prawn tanks</a>
@@ -47,19 +47,9 @@
               <input type="text" id="tankName" name="tankName" placeholder="Example: Tank 01" required />
             </label>
             <label>
-              Prawn stage / size
-              <select id="prawnStage" name="prawnStage" required>
-                <option value="">Select stage or PL size...</option>
-                <option value="Nauplii">Nauplii - newly hatched</option>
-                <option value="Zoea">Zoea - larval stage</option>
-                <option value="Mysis">Mysis - larval stage</option>
-                <option value="PL1-PL5">PL1-PL5 - early post-larvae</option>
-                <option value="PL6-PL10">PL6-PL10 - developing post-larvae</option>
-                <option value="PL11-PL15">PL11-PL15 - nursery-ready band</option>
-                <option value="PL16-PL20">PL16-PL20 - larger post-larvae</option>
-                <option value="PL21-PL30">PL21-PL30 - advanced post-larvae</option>
-                <option value="Juvenile">Juvenile - post-PL</option>
-              </select>
+              Date stocked / entered tank
+              <input type="date" id="stockedAt" name="stockedAt" required />
+              <small class="field-help">Stage and days in tank update automatically from this date.</small>
             </label>
           </div>
 

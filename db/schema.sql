@@ -5,6 +5,7 @@ USE prawn_farm_hatchery;
 CREATE TABLE IF NOT EXISTS tank_records (
     id INT AUTO_INCREMENT PRIMARY KEY,
     tank_name VARCHAR(100) NOT NULL,
+    stocked_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     prawn_stage VARCHAR(50) NOT NULL DEFAULT 'Unknown',
     food_type_primary VARCHAR(100) NOT NULL DEFAULT 'Unknown',
     food_type_secondary VARCHAR(100),

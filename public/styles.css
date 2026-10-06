@@ -216,6 +216,12 @@ label {
   gap: 6px;
 }
 
+.field-help {
+  color: var(--muted);
+  font: 400 0.78rem Arial, Helvetica, sans-serif;
+  line-height: 1.4;
+}
+
 input,
 textarea,
 select,

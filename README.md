@@ -15,7 +15,7 @@ This project is a small hatchery tracking app for keeping notes on when each tan
 - Store records in a MySQL database
 - Use the current local date and time automatically
 
-The stage dropdown uses common hatchery terms: nauplii, zoea, mysis, then PL bands such as PL1-PL5 and PL6-PL10. PL means post-larvae; exact size and timing vary with species, temperature, nutrition, and hatchery practice, so the app records the operational band used by your farm.
+For black tiger prawns, the hatchery page now calculates approximate lifecycle bands from the date stocked: nauplii, zoea, mysis, early PL, later PL, and juvenile/grow-out. PL means post-larvae. These are operational estimates because exact timing and size vary with species, temperature, nutrition, and hatchery practice.
 
 The adult tank page is available at `/adult.html`. Its food fields use clear dropdowns with an `Other - see notes` option for anything outside the standard list.
 

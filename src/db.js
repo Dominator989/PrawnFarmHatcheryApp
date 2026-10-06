@@ -118,6 +118,7 @@ async function initDatabase() {
       CREATE TABLE IF NOT EXISTS tank_records (
         id INT AUTO_INCREMENT PRIMARY KEY,
         tank_name VARCHAR(100) NOT NULL,
+        stocked_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
         prawn_stage VARCHAR(50) NOT NULL DEFAULT 'Unknown',
         food_type_primary VARCHAR(100) NOT NULL DEFAULT 'Unknown',
         food_type_secondary VARCHAR(100),
@@ -154,6 +155,11 @@ async function initDatabase() {
       ALTER TABLE tank_records
       ADD COLUMN IF NOT EXISTS food_type_secondary VARCHAR(100)
     `);
+    await pool.query(`
+      ALTER TABLE tank_records
+      ADD COLUMN IF NOT EXISTS stocked_at DATETIME NULL
+    `);
+    await pool.query('UPDATE tank_records SET stocked_at = created_at WHERE stocked_at IS NULL');
 
     await pool.query(`
       CREATE INDEX IF NOT EXISTS idx_tank_records_tank_name ON tank_records (tank_name)
@@ -170,6 +176,7 @@ async function initDatabase() {
     CREATE TABLE IF NOT EXISTS tank_records (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       tank_name TEXT NOT NULL,
+      stocked_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
       prawn_stage TEXT NOT NULL DEFAULT 'Unknown',
       food_type_primary TEXT NOT NULL DEFAULT 'Unknown',
       food_type_secondary TEXT,
@@ -199,6 +206,8 @@ async function initDatabase() {
   `);
 
   await addSqliteColumnIfMissing('prawn_stage TEXT NOT NULL DEFAULT \'Unknown\'');
+  await addSqliteColumnIfMissing('stocked_at TEXT');
+  await run('UPDATE tank_records SET stocked_at = created_at WHERE stocked_at IS NULL');
   await addSqliteColumnIfMissing('food_type_primary TEXT NOT NULL DEFAULT \'Unknown\'');
   await addSqliteColumnIfMissing('food_type_secondary TEXT');
   await run(`CREATE INDEX IF NOT EXISTS idx_tank_records_tank_name ON tank_records (tank_name)`);
