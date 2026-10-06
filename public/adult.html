@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Adult Prawn Tank Log</title>
+    <link rel="stylesheet" href="/styles.css" />
+    <link rel="stylesheet" href="/adult.css" />
+  </head>
+  <body>
+    <main class="container">
+      <header class="page-header">
+        <div>
+          <p class="eyebrow">Grow-out operations</p>
+          <h1>Adult prawn care, at a glance.</h1>
+          <p class="header-copy">Track water changes, feeding routines, and practical notes for adult stock.</p>
+        </div>
+        <div class="page-links">
+          <a class="nav-button" href="/">Open hatchery tanks</a>
+          <div class="live-status"><span class="status-dot"></span>Live local log</div>
+        </div>
+      </header>
+
+      <section class="metric-grid" aria-label="Adult prawn activity summary">
+        <article class="metric-card metric-card-accent">
+          <span class="metric-label">Adult tank updates</span>
+          <strong id="metricTotal">0</strong>
+          <span class="metric-caption">records this season</span>
+        </article>
+        <article class="metric-card">
+          <span class="metric-label">Feed due soon</span>
+          <strong id="metricDue">0</strong>
+          <span class="metric-caption">within the next 24 hours</span>
+        </article>
+        <article class="metric-card metric-card-warm">
+          <span class="metric-label">Needs attention</span>
+          <strong id="metricOverdue">0</strong>
+          <span class="metric-caption">feeding windows passed</span>
+        </article>
+      </section>
+
+      <section class="panel form-panel">
+        <div class="section-heading form-heading">
+          <div>
+            <p class="eyebrow">Adult stock</p>
+            <h2>Log an adult tank update</h2>
+          </div>
+        </div>
+        <form id="adult-form">
+          <div class="row two-up">
+            <label>
+              Tank name
+              <input type="text" id="tankName" name="tankName" placeholder="Example: Grow-out 01" required />
+            </label>
+            <label>
+              <span class="label-heading">Primary food</span>
+              <select id="foodTypePrimary" name="foodTypePrimary" required>
+                <option value="">Select primary food...</option>
+                <option value="Commercial prawn pellets">Commercial prawn pellets</option>
+                <option value="Fish meal">Fish meal</option>
+                <option value="Mollusc meal">Mollusc meal</option>
+                <option value="Fresh fish / seafood">Fresh fish / seafood</option>
+                <option value="Artemia">Artemia</option>
+                <option value="Formulated grow-out feed">Formulated grow-out feed</option>
+                <option value="Other">Other - see notes</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="row two-up">
+            <label>
+              <span class="label-heading">Second food <span class="optional-label">Optional</span></span>
+              <select id="foodTypeSecondary" name="foodTypeSecondary">
+                <option value="">No second food</option>
+                <option value="Commercial prawn pellets">Commercial prawn pellets</option>
+                <option value="Fish meal">Fish meal</option>
+                <option value="Mollusc meal">Mollusc meal</option>
+                <option value="Fresh fish / seafood">Fresh fish / seafood</option>
+                <option value="Artemia">Artemia</option>
+                <option value="Formulated grow-out feed">Formulated grow-out feed</option>
+                <option value="Other">Other - see notes</option>
+              </select>
+            </label>
+            <label>
+              Next feed due
+              <input type="datetime-local" id="nextFeedDue" name="nextFeedDue" />
+            </label>
+          </div>
+
+          <div class="row two-up">
+            <label>
+              Water changed
+              <input type="datetime-local" id="waterChangedAt" name="waterChangedAt" required />
+            </label>
+            <label>
+              Last fed
+              <input type="datetime-local" id="lastFedAt" name="lastFedAt" required />
+            </label>
+          </div>
+
+          <div class="row">
+            <label>
+              Extra notes
+              <textarea id="notes" name="notes" rows="4" placeholder="Add observations, appetite, moulting, or stock condition notes..."></textarea>
+            </label>
+          </div>
+
+          <div class="actions">
+            <button type="submit">Save adult tank update</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="panel activity-panel">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">The latest log</p>
+            <h2>Recent adult tank activity</h2>
+          </div>
+          <button type="button" id="exportButton" class="button-secondary">Export CSV</button>
+        </div>
+        <div class="activity-tools">
+          <label class="search-label" for="searchInput">Find a tank</label>
+          <input type="search" id="searchInput" placeholder="Search by tank or food..." />
+        </div>
+        <div id="records" class="records" aria-live="polite"></div>
+      </section>
+    </main>
+
+    <script src="/adult.js"></script>
+  </body>
+</html>

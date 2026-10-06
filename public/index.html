@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Prawn Farm Hatchery Tank Tracker</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="container">
+      <header class="page-header">
+        <div>
+          <p class="eyebrow">Hatchery operations</p>
+          <h1>Tank care, at a glance.</h1>
+          <p class="header-copy">Keep feeding and water-change decisions visible for every tank in the room.</p>
+        </div>
+        <div class="page-links">
+          <a class="nav-button" href="/adult.html">Open adult prawn tanks</a>
+          <div class="live-status"><span class="status-dot"></span>Live local log</div>
+        </div>
+      </header>
+
+      <section class="metric-grid" aria-label="Tank activity summary">
+        <article class="metric-card metric-card-accent">
+          <span class="metric-label">Tank updates</span>
+          <strong id="metricTotal">0</strong>
+          <span class="metric-caption">records this season</span>
+        </article>
+        <article class="metric-card">
+          <span class="metric-label">Feed due soon</span>
+          <strong id="metricDue">0</strong>
+          <span class="metric-caption">within the next 24 hours</span>
+        </article>
+        <article class="metric-card metric-card-warm">
+          <span class="metric-label">Needs attention</span>
+          <strong id="metricOverdue">0</strong>
+          <span class="metric-caption">feeding windows passed</span>
+        </article>
+      </section>
+
+      <section class="panel form-panel">
+        <h2>Log a tank update</h2>
+        <form id="tank-form">
+          <div class="row two-up">
+            <label>
+              Tank name
+              <input type="text" id="tankName" name="tankName" placeholder="Example: Tank 01" required />
+            </label>
+            <label>
+              Prawn stage / size
+              <select id="prawnStage" name="prawnStage" required>
+                <option value="">Select stage or PL size...</option>
+                <option value="Nauplii">Nauplii - newly hatched</option>
+                <option value="Zoea">Zoea - larval stage</option>
+                <option value="Mysis">Mysis - larval stage</option>
+                <option value="PL1-PL5">PL1-PL5 - early post-larvae</option>
+                <option value="PL6-PL10">PL6-PL10 - developing post-larvae</option>
+                <option value="PL11-PL15">PL11-PL15 - nursery-ready band</option>
+                <option value="PL16-PL20">PL16-PL20 - larger post-larvae</option>
+                <option value="PL21-PL30">PL21-PL30 - advanced post-larvae</option>
+                <option value="Juvenile">Juvenile - post-PL</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="row two-up">
+            <label>
+              Primary food
+              <select id="foodTypePrimary" name="foodTypePrimary" required>
+                <option value="">Select primary food...</option>
+                <option value="Microalgae - Nannochloropsis">Microalgae - Nannochloropsis</option>
+                <option value="Microalgae - Chaetoceros">Microalgae - Chaetoceros</option>
+                <option value="Rotifers">Rotifers</option>
+                <option value="Artemia nauplii">Artemia nauplii</option>
+                <option value="Formulated hatchery microdiet">Formulated hatchery microdiet</option>
+                <option value="Crumble / pellets">Crumble / pellets</option>
+                <option value="Other">Other - see notes</option>
+              </select>
+            </label>
+            <label>
+              <span class="label-heading">Second food <span class="optional-label">Optional</span></span>
+              <select id="foodTypeSecondary" name="foodTypeSecondary">
+                <option value="">No second food</option>
+                <option value="Microalgae - Nannochloropsis">Microalgae - Nannochloropsis</option>
+                <option value="Microalgae - Chaetoceros">Microalgae - Chaetoceros</option>
+                <option value="Rotifers">Rotifers</option>
+                <option value="Artemia nauplii">Artemia nauplii</option>
+                <option value="Formulated hatchery microdiet">Formulated hatchery microdiet</option>
+                <option value="Crumble / pellets">Crumble / pellets</option>
+                <option value="Other">Other - see notes</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="row two-up">
+            <label>
+              Water changed
+              <input type="datetime-local" id="waterChangedAt" name="waterChangedAt" required />
+            </label>
+            <label>
+              Last fed
+              <input type="datetime-local" id="lastFedAt" name="lastFedAt" required />
+            </label>
+          </div>
+
+          <div class="row">
+            <label>
+              Next feed due
+              <input type="datetime-local" id="nextFeedDue" name="nextFeedDue" />
+            </label>
+          </div>
+
+          <div class="row">
+            <label>
+              Extra notes
+              <textarea id="notes" name="notes" rows="4" placeholder="Add anything else worth remembering for this tank..."></textarea>
+            </label>
+          </div>
+
+          <div class="actions">
+            <button type="submit">Save tank update</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="panel activity-panel">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">The latest log</p>
+            <h2>Recent tank activity</h2>
+          </div>
+          <button type="button" id="exportButton" class="button-secondary">Export CSV</button>
+        </div>
+        <div class="activity-tools">
+          <label class="search-label" for="searchInput">Find a tank</label>
+          <input type="search" id="searchInput" placeholder="Search by tank or feed type..." />
+        </div>
+        <div id="records" class="records" aria-live="polite"></div>
+      </section>
+    </main>
+
+    <script src="/app.js"></script>
+  </body>
+</html>

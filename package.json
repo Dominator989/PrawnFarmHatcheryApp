@@ -1,0 +1,26 @@
+{
+  "name": "prawn-farm-hatchery-app",
+  "version": "1.0.0",
+  "description": "Track water changes, feeding, and notes for each prawn tank in a SQLite-first app with MySQL-ready configuration for later scaling.",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js"
+  },
+  "keywords": [
+    "prawn",
+    "aquaculture",
+    "hatchery",
+    "sqlite",
+    "mysql",
+    "tracking"
+  ],
+  "author": "Dominator989",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "mysql2": "^3.11.0",
+    "sqlite3": "^5.1.7"
+  }
+}
