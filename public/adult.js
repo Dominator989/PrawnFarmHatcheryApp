@@ -1,7 +1,14 @@
 const form = document.getElementById('adult-form');
 const recordsContainer = document.getElementById('records');
 const searchInput = document.getElementById('searchInput');
+const statusMessage = document.getElementById('statusMessage');
 let adultRecords = [];
+
+function showMessage(message, type = 'success') {
+  statusMessage.textContent = message;
+  statusMessage.className = `status-message ${type === 'error' ? 'error' : ''}`;
+  statusMessage.hidden = false;
+}
 
 function toLocalDateTimeString(date = new Date()) {
   const localDate = new Date(date);
@@ -119,15 +126,15 @@ form.addEventListener('submit', async (event) => {
     form.reset();
     refreshCurrentTimes();
     await loadRecords();
-    alert(result.message);
+    showMessage(result.message);
   } catch (error) {
-    alert(error.message);
+    showMessage(error.message, 'error');
   }
 });
 
 function exportCsv() {
   if (adultRecords.length === 0) {
-    alert('There are no adult tank records to export yet.');
+    showMessage('There are no adult tank records to export yet.', 'error');
     return;
   }
 
