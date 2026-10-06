@@ -312,6 +312,60 @@ button:hover {
   gap: 16px;
 }
 
+.table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.activity-table {
+  width: 100%;
+  min-width: 980px;
+  border-collapse: collapse;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 0.84rem;
+  text-align: left;
+}
+
+.activity-table th,
+.activity-table td {
+  padding: 14px 13px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+
+.activity-table thead th {
+  background: #f1f7f4;
+  color: var(--muted);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+.activity-table tbody tr:last-child th,
+.activity-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.activity-table tbody tr:hover {
+  background: #f8fbf9;
+}
+
+.activity-table tbody th {
+  min-width: 110px;
+  color: var(--text);
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 0.98rem;
+  white-space: nowrap;
+}
+
+.activity-table td:nth-child(2),
+.activity-table td:nth-child(3),
+.activity-table td:last-child {
+  color: var(--muted);
+}
+
 .record-card {
   border: 1px solid var(--border);
   border-radius: 14px;

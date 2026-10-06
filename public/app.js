@@ -91,45 +91,30 @@ function renderTankRecords() {
     return;
   }
 
-  recordsContainer.innerHTML = filteredRecords
-    .map((record) => {
-      const feedState = getFeedState(record.next_feed_due);
-      return `
-        <article class="record-card">
-          <div class="record-header">
-            <div>
-              <span class="record-kicker">Tank record</span>
-              <h3>${escapeHtml(record.tank_name)}</h3>
-            </div>
-            <span class="record-status ${feedState.className}">${feedState.label}</span>
-          </div>
-          <div class="record-meta">
-            <div class="meta-box">
-              <strong>Stage / size</strong>
-              <span>${escapeHtml(record.prawn_stage) || 'Not set'}</span>
-            </div>
-            <div class="meta-box">
-              <strong>Water changed</strong>
-              <span>${formatDate(record.water_changed_at)}</span>
-            </div>
-            <div class="meta-box">
-              <strong>Last fed</strong>
-              <span>${formatDate(record.last_fed_at)}</span>
-            </div>
-            <div class="meta-box">
-              <strong>Next feed</strong>
-              <span>${formatDate(record.next_feed_due)}</span>
-            </div>
-            <div class="meta-box">
-              <strong>Food plan</strong>
-              <span>${escapeHtml(record.food_type_primary || record.feed_type) || 'Not set'}${record.food_type_secondary ? ` + ${escapeHtml(record.food_type_secondary)}` : ''}</span>
-            </div>
-          </div>
-          <p class="record-notes"><strong>Notes:</strong> ${escapeHtml(record.notes) || 'No additional notes.'}</p>
-        </article>
-      `;
-    })
-    .join('');
+  recordsContainer.innerHTML = `
+    <div class="table-wrap">
+      <table class="activity-table">
+        <thead>
+          <tr><th>Tank</th><th>Stage / size</th><th>Food plan</th><th>Water changed</th><th>Last fed</th><th>Next feed</th><th>Status</th><th>Notes</th></tr>
+        </thead>
+        <tbody>
+          ${filteredRecords.map((record) => {
+            const feedState = getFeedState(record.next_feed_due);
+            return `<tr>
+              <th scope="row">${escapeHtml(record.tank_name)}</th>
+              <td>${escapeHtml(record.prawn_stage) || 'Not set'}</td>
+              <td>${escapeHtml(record.food_type_primary || record.feed_type) || 'Not set'}${record.food_type_secondary ? ` + ${escapeHtml(record.food_type_secondary)}` : ''}</td>
+              <td>${formatDate(record.water_changed_at)}</td>
+              <td>${formatDate(record.last_fed_at)}</td>
+              <td>${formatDate(record.next_feed_due)}</td>
+              <td><span class="record-status ${feedState.className}">${feedState.label}</span></td>
+              <td>${escapeHtml(record.notes) || 'No notes'}</td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>
+  `;
 }
 
 async function loadTankRecords() {
