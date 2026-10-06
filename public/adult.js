@@ -77,7 +77,7 @@ function renderRecords() {
             const feedState = getFeedState(record.next_feed_due);
             const foodPlan = `${escapeHtml(record.food_type_primary)}${record.food_type_secondary ? ` + ${escapeHtml(record.food_type_secondary)}` : ''}`;
             return `<tr>
-              <th scope="row">${escapeHtml(record.tank_name)}</th>
+              <th scope="row" title="${escapeHtml(record.tank_name)}">${escapeHtml(record.tank_name)}</th>
               <td>${foodPlan}</td>
               <td>${formatDate(record.water_changed_at)}</td>
               <td>${formatDate(record.last_fed_at)}</td>

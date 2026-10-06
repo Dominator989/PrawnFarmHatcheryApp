@@ -133,7 +133,7 @@ function renderTankRecords() {
             const feedState = getFeedState(record.next_feed_due);
             const lifecycle = getLifecycle(record);
             return `<tr>
-              <th scope="row">${escapeHtml(record.tank_name)}</th>
+              <th scope="row" title="${escapeHtml(record.tank_name)}">${escapeHtml(record.tank_name)}</th>
               <td>${lifecycle.daysInTank}</td>
               <td>${lifecycle.stage}</td>
               <td>${escapeHtml(record.food_type_primary || record.feed_type) || 'Not set'}${record.food_type_secondary ? ` + ${escapeHtml(record.food_type_secondary)}` : ''}</td>
